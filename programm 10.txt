@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_STATES 100
+
+// Structure to represent a state in the NFA
+struct State {
+    int stateNumber;
+    struct State* epsilonTransitions[MAX_STATES];
+};
+
+// Function to find ε-closure for a given state
+void findEpsilonClosure(struct State* nfaStates[], int stateNumber, bool visited[]) {
+    // Mark the current state as visited
+    visited[stateNumber] = true;
+
+    // Print the state number in the ε-closure
+    printf("%d ", stateNumber);
+
+    // Traverse through all epsilon transitions of the current state
+    for (int i = 0; nfaStates[stateNumber]->epsilonTransitions[i] != NULL; i++) {
+        int nextStateNumber = nfaStates[stateNumber]->epsilonTransitions[i]->stateNumber;
+
+        // If the next state is not visited, recursively find its ε-closure
+        if (!visited[nextStateNumber]) {
+            findEpsilonClosure(nfaStates, nextStateNumber, visited);
+        }
+    }
+}
+
+// Function to find ε-closure for all states in the NFA
+void findEpsilonClosures(struct State* nfaStates[], int numStates) {
+    bool visited[MAX_STATES];
+
+    // Iterate through all states in the NFA
+    for (int i = 0; i < numStates; i++) {
+        // Initialize visited array for each state
+        for (int j = 0; j < numStates; j++) {
+            visited[j] = false;
+        }
+
+        // Print the current state
+        printf(

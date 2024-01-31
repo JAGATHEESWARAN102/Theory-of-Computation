@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_STATES 100
+
+// Structure to represent a state in the NFA
+struct State {
+    int stateNumber;
+    struct State* epsilonTransitions[MAX_STATES];
+};
+
+// Function to find ε-closure for a given state
+void findEpsilonClosure(struct State* nfaStates[], int currentState, bool visited[]) {
+    // Mark the current state as visited
+    visited[currentState] = true;
+
+    // Print the state number in the ε-closure
+    printf("%d ", currentState);
+
+    // Traverse through all epsilon transitions of the current state
+    for (int i = 0; nfaStates[currentState]->epsilonTransitions[i] != NULL; i++) {
+        int nextStateNumber = nfaStates[currentState]->epsilonTransitions[i]->stateNumber;
+
+        // If the next state is not visited, recursively find its ε-closure
+        if (!visited[nextStateNumber]) {
+            findEpsilonClosure(nfaStates, nextStateNumber, visited);
+        }
+    }
+}
+
+// Function to find ε-closure for all states in the NFA
+void findEpsilonClosures(struct State* nfaStates[], int numStates) {
+    bool visited[MAX_STATES];
+
+    // Iterate through all states in the NFA
+    for (int i = 0; i < numStates; i++) {
+        // Initialize visited array for each state
+        for (int j = 0; j < numStates; j++) {
+            visited[j] = false;
+        }
+
+        // Print the current state
+        printf("ε-closure(%d): ", i);
+
+        // Find and print the ε-closure for the current state
+        findEpsilonClosure(nfaStates, i, visited);
+
+        printf("\n");
+    }
+}
+
+int main() {
+    // Example NFA with ε-moves:
+    // State 0 --ε--> State 1 --a--> State 2
+    //        --ε--> State 3 --b--> State 4
+    // State 1 --ε--> State 5 --ε--> State 6
+    // State 3 --ε--> State 7
+    // State 5 --ε--> State 8
+
+    struct State* nfaStates[MAX_STATES];
+    int numStates = 9;
+
+    // Initialize NFA states
+    for (int i = 0; i < numStates; i++) {
+        nfaStates[i] = (struct State*)malloc(sizeof(struct State));
+        nfaStates[i]->stateNumber = i;
+
+        // Initialize epsilon transitions to NULL
+        for (int j = 0; j < MAX_STATES; j++) {
+            nfaStates[i]->epsilonTransitions[j] = NULL;
+        }
+    }
+
+    // Set epsilon transitions for the example NFA
+    nfaStates[0]->epsilonTransitions[0] = nfaStates[1];
+    nfaStates[0]->epsilonTransitions[1] = nfaStates[3];
+
+    nfaStates[1]->epsilonTransitions[0] = nfaStates[5];
+
+    nfaStates[3]->epsilonTransitions[0] = nfaStates[7];
+
+    nfaStates[5]->epsilonTransitions[0] = nfaStates[8];
+
+    // Find and print ε-closure for all states in the NFA
+    findEpsilonClosures(nfaStates, numStates);
+
+    // Free allocated memory
+    for (int i = 0; i < numStates; i++) {
+        free(nfaStates[i]);
+    }
+
+    return 0;
+}

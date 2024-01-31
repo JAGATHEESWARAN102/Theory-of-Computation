@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+
+// Function to check if a string belongs to the CFG language
+int isCFGString(char *str);
+
+int main()
+{
+    char input[100];
+
+    // Get input string from the user
+    printf("Enter a string: ");
+    scanf("%s", input);
+
+    // Check if the input string belongs to the CFG language
+    if (isCFGString(input))
+        printf("Belongs to the language\n");
+    else
+        printf("Does not belong to the language\n");
+
+    return 0;
+}
+
+// Recursive function to check if a string belongs to the CFG language
+int isCFGString(char *str)
+{
+    // Simulate production S ? A101A
+    if (*str == '1')
+    {
+        int i = 1;
+        while (*(str + i) == '0' || *(str + i) == '1')
+        {
+            i++;
+        }
+
+        if (*(str + i) == '1' && *(str + i + 1) == '0' && isCFGString(str + i + 2) && *(str + i + 2) == '1')
+        {
+            return 1; // Belongs to the language
+        }
+    }
+
+    return 0; // Invalid production
+}

@@ -1,0 +1,53 @@
+include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+// Function to simulate NFA for the language: strings starting with 'b' and ending with 'a'
+bool isAccepted(char str[]) {
+    int currentState = 0;
+    int length = strlen(str);
+
+    for (int i = 0; i < length; i++) {
+        switch (currentState) {
+            case 0:
+                if (str[i] == 'b') {
+                    currentState = 1;
+                }
+                break;
+                
+            case 1:
+                if (str[i] == 'a') {
+                    currentState = 2;
+                }
+                break;
+                
+            case 2:
+                // Accepting state, no transitions allowed
+                break;
+                
+            default:
+                // Invalid state, reject the string
+                return false;
+        }
+    }
+
+    // Check if the final state is the accepting state
+    return currentState == 2;
+}
+
+int main() {
+    char inputString[100];
+
+    // Get input string from the user
+    printf("Enter a string: ");
+    scanf("%s", inputString);
+
+    // Check if the string is accepted
+    if (isAccepted(inputString)) {
+        printf("String is accepted.\n");
+    } else {
+        printf("String is not accepted.\n");
+    }
+
+    return 0;
+}

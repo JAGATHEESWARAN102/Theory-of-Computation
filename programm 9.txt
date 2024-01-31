@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+// Define the states of the NFA
+enum States {
+    Q0, // Initial state
+    Q1, // Accepting state
+    Q2  // Dead state (non-accepting state)
+};
+
+// Function to simulate the NFA
+bool simulateNFA(char *input) {
+    // Set initial state
+    enum States currentState = Q0;
+
+    // Traverse the input string
+    while (*input != '\0') {
+        // Transition based on the current state and input symbol
+        switch (currentState) {
+            case Q0:
+                if (*input == 'o') {
+                    currentState = Q1;
+                } else {
+                    currentState = Q2; // Move to dead state if 'o' is not encountered
+                }
+                break;
+
+            case Q1:
+                if (*input == '1') {
+                    currentState = Q2; // Move to dead state if '1' is encountered
+                }
+                break;
+
+            case Q2:
+                // Remain in the dead state
+                break;
+        }
+
+        // Move to the next symbol in the input
+        input++;
+    }
+
+    // Check the final state
+    return currentState == Q1;
+}
+
+int main() {
+    char input[100];
+
+    // Get input string from the user
+    printf("Enter a string: ");
+    scanf("%s", input);
+
+    // Simulate the NFA and check if the string is accepted
+    if (simulateNFA(input)) {
+        printf("Accepted\n");
+    } else {
+        printf("Not Accepted\n");
+    }
+
+    return 0;
+}
